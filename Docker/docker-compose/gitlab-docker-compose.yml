@@ -1,0 +1,104 @@
+version: '2'
+
+services:
+  gitlab_redis:
+    restart: always
+    image: sameersbn/redis:latest
+    container_name : gitlab_redis
+    hostname: gitlab_redis
+    mem_limit: 2000m
+    stdin_open: true
+    tty: true
+    command:
+    - --loglevel warning
+    volumes:
+    - /data1/Docker/gitlab/redis:/var/lib/redis:Z
+
+  gitlab_postgresql:
+    restart: always
+    image: sameersbn/postgresql:9.5-3
+    container_name : gitlab_postgresql
+    hostname: gitlab_postgresql
+    mem_limit: 2000m
+    stdin_open: true
+    tty: true
+    volumes:
+    - /data1/Docker/gitlab/postgresql:/var/lib/postgresql:Z
+    environment:
+    - DB_USER=gitlab
+    - DB_PASS=betapassword
+    - DB_NAME=gitlabhq_production
+    - DB_EXTENSION=pg_trgm
+
+  gitlab:
+    restart: always
+    image: sameersbn/gitlab:8.13.3
+    container_name : gitlab
+    hostname: gitlab
+    mem_limit: 2000m
+    stdin_open: true
+    tty: true
+    depends_on:
+    - gitlab_redis
+    - gitlab_postgresql
+    ports:
+    - "10080:80"
+    - "10022:22"
+    volumes:
+    - /data1/Docker/gitlab/gitlab:/home/git/data:Z
+    environment:
+    - DEBUG=false
+
+    - DB_ADAPTER=postgresql
+    - DB_HOST=gitlab_postgresql
+    - DB_PORT=5432
+    - DB_USER=gitlab
+    - DB_PASS=betapassword
+    - DB_NAME=gitlabhq_production
+
+    - REDIS_HOST=gitlab_redis
+    - REDIS_PORT=6379
+
+    - TZ=Asia/Beijing
+    - GITLAB_TIMEZONE=Beijing
+
+    - GITLAB_HTTPS=false
+    - SSL_SELF_SIGNED=false
+
+    - GITLAB_HOST=10.18.100.8
+    - GITLAB_PORT=10080
+    - GITLAB_SSH_PORT=10022
+    - GITLAB_RELATIVE_URL_ROOT=
+    - GITLAB_SECRETS_DB_KEY_BASE=qwertyuiozcvxpasdfghjklzxcvbnm
+    - GITLAB_SECRETS_SECRET_KEY_BASE=qwertyuiozcvxpasdfghjklzxcvbnm
+    - GITLAB_SECRETS_OTP_KEY_BASE=qwertyuiozcvxpasdfghjklzxcvbnm
+
+#    - GITLAB_ROOT_PASSWORD=gitlab
+#    - GITLAB_ROOT_EMAIL=admin@betago2016.com
+
+    - GITLAB_NOTIFY_ON_BROKEN_BUILDS=true
+    - GITLAB_NOTIFY_PUSHER=false
+
+    - GITLAB_EMAIL=gitlab@betago2016.com
+    - GITLAB_EMAIL_REPLY_TO=gitlab@betago2016.com
+    - GITLAB_INCOMING_EMAIL_ADDRESS=gitlab@betago2016.com
+
+    - GITLAB_BACKUP_SCHEDULE=daily
+    - GITLAB_BACKUP_TIME=05:00
+
+    - SMTP_ENABLED=true
+    - SMTP_DOMAIN=www.betago2016.com
+    - SMTP_HOST=smtp.exmail.qq.com
+    - SMTP_PORT=25
+    - SMTP_USER=gitlab@betago2016.com
+    - SMTP_PASS=Betago2017
+    - SMTP_STARTTLS=false
+    - SMTP_AUTHENTICATION=login
+
+    - IMAP_ENABLED=true
+    - IMAP_HOST=imap.exmail.qq.com
+    - IMAP_PORT=143
+    - IMAP_USER=gitlab@betago2016.com
+    - IMAP_PASS=Betago2017
+    - IMAP_SSL=false
+    - IMAP_STARTTLS=false

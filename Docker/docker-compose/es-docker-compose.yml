@@ -1,0 +1,43 @@
+version: '2'
+
+services:
+    redis:
+      restart: always
+      image: redis:3.2.10
+      container_name: redis
+      hostname: redis
+      stdin_open: true
+      tty: true
+      working_dir: /opt/redis/data
+      ports:
+        - "6379:6379"
+      command: redis-server
+      entrypoint: /usr/local/bin/Docker-entrypoint.sh
+      links:
+        - elastic
+
+
+    elastic:
+      restart: always
+      image: elasticsearch:2.4.6
+      container_name: elastic
+      hostname: elastic
+      stdin_open: true
+      working_dir: /usr/share/elasticsearch
+      tty: true
+      ports:
+        - "9010:9010"
+        - "9200:9200"
+        - "9300:9300"
+      volumes:
+        - /data1/auto_upline/common:/opt/common
+        - /data1/Docker/elastic/logs:/usr/share/elasticsearch/logs
+        - /data1/Docker/elastic/config:/usr/share/elasticsearch/config
+        - /data1/Docker/elastic/plugins:/usr/share/elasticsearch/plugins
+        - /data1/Docker/elastic/data:/usr/share/elasticsearch/data
+      environment:
+        ES_JAVA_OPTS: "-Duser.timezone=GMT+08 -Xms1500m -Xmx1500m -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.rmi.port=9010 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=10.18.0.9"
+        bootstrap.ignore_system_bootstrap_checks: "true"
+      entrypoint: /Docker-entrypoint.sh
+      command: elasticsearch
+

@@ -1,0 +1,87 @@
+version: '2'
+
+services:
+  # beta project
+  nginx:
+    restart: always
+    image: nginx
+    container_name: nginx
+    hostname: nginx
+    stdin_open: true
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /data1/auto_upline/nginx:/data/service
+      - /data1/Docker/nginx:/etc/nginx
+      - /data1/log/nginx:/data/log/nginx
+    command: nginx -g 'daemon off;'
+    links:
+      - beta_api_qa
+      - beta_scheduler_qa
+      - beta_manage_qa
+
+  beta_api_qa:
+    # 自动重启
+    restart: always
+    image: jdk8:latest
+    container_name: beta_api_qa
+    hostname: beta_api_qa
+    # 工作目录，表示容器运行后所在目录
+    working_dir: /opt/app
+    stdin_open: true
+    # 分配tty设备，该可以支持终端登录
+    tty: true
+    # 端口映射
+    ports:
+      - "8080:8080"
+    # 文件映射
+    volumes:
+      - /data1/auto_upline/common:/opt/common
+      - /data1/auto_upline/beta_api:/opt/app
+    # 参数
+    environment:
+      JAVA_OPTS: "-Duser.timezone=GMT+08 -Xmx1G -Xms1G -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m"
+    # 启动命令 -Dspring.profiles.active=dev表示使用dev配置
+    command: java -jar -Dspring.profiles.active=dev app-alone.war
+
+  beta_scheduler_qa:
+    restart: always
+    image: jdk8:latest
+    container_name: beta_scheduler_qa
+    hostname: beta_scheduler_qa
+    working_dir: /opt/app
+    stdin_open: true
+    tty: true
+    ports:
+      - "18082:8080"
+    volumes:
+      - /data1/auto_upline/common:/opt/common
+      - /data1/auto_upline/beta_scheduler:/opt/app
+    environment:
+      JAVA_OPTS: "-Duser.timezone=GMT+08 -Xmx1G -Xms1G -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m"
+    command: java -jar -Dspring.profiles.active=dev app-alone.war
+
+  beta_manage_qa:
+    restart: always
+    image: tomcat:latest
+    container_name: beta_manage_qa
+    hostname: beta_manage_qa
+    stdin_open: true
+    tty: true
+    ports:
+      - "18083:8080"
+    volumes:
+      - /data1/auto_upline/common:/opt/common
+      - /data1/auto_upline/manage:/opt/tomcat/webapps
+    environment:
+      CATALINA_OPTS: "-Duser.timezone=GMT+08 -Dspring.profiles.active=dev"
+
+
+
+
+# 使用命令创建和启动
+# docker run --privileged=true -p80:80 -v /root/nginx_docker/www:/www -v /root/nginx.conf:/etc/nginx/nginx.conf --name nginx -d docker.io/nginx
+# --privileged表示以root权限启动，用友mount和amount权限
+

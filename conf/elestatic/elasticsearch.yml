@@ -1,0 +1,98 @@
+network.host: 0.0.0.0
+cluster.name: beta_test_es
+node.name: node1
+cluster.routing.allocation.disk.watermark.low: 98%
+cluster.routing.allocation.disk.watermark.high: 99%
+network.publish_host: 10.18.100.3
+transport.tcp.port: 9300
+http.port: 9200
+node.master: true
+node.data: true
+index.number_of_shards: 5
+index.number_of_replicas: 1
+discovery.zen.ping.multicast.enabled: false
+discovery.zen.ping.unicast.hosts: []
+discovery.zen.fd.ping_timeout: 120s
+discovery.zen.fd.ping_retries: 6
+discovery.zen.fd.ping_interval: 30s
+
+#ansj_config:ansj_library.properties
+# 全局变量配置方式一
+ansj:
+  #默认参数配置
+  isNameRecognition: true #开启姓名识别
+  isNumRecognition: true #开启数字识别
+  isQuantifierRecognition: true #是否数字和量词合并
+  isRealName: false; #是否保留真实词语,建议保留false
+
+  #用户自定词典配置
+  dic: /usr/share/elasticsearch/config/analysis-ansj/library/default.dic 
+  dic_empty: /usr/share/elasticsearch/config/analysis-ansj/library/default_empty.dic 
+  #dic: http://mob.test.betago2016.com/aidata/analysis-ansj/library/default.dic
+  #dic_empty: http://mob.test.betago2016.com/aidata/analysis-ansj/library/default_empty.dic
+  # http方式加载
+  #dic_d1: http://xxx/xx.dic
+  # jar中文件加载
+  #dic_d2: jar://org.ansj.dic.DicReader|/dic2.dic
+  # 从数据库中加载
+  #dic_d3: jdbc:mysql://xxxx:3306/ttt?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull|username|password|select name as name,nature,freq from dic where type=1
+  # 从自定义类中加载,YourClas  extends PathToStream
+  #dic_d3: class://xxx.xxx.YourClas|ohterparam
+
+  #过滤词典配置
+  #stop: http,file,jar,class,jdbc 都支持
+  #stop_key1: ...
+  stop: /usr/share/elasticsearch/config/analysis-ansj/library/stop.dic
+  stop_empty: /usr/share/elasticsearch/config/analysis-ansj/library/stop_empty.dic
+  #stop: http://mob.test.betago2016.com/aidata/analysis-ansj/library/stop.dic
+  #stop_empty: http://mob.test.betago2016.com/aidata/analysis-ansj/library/stop_empty.dic
+
+  #歧义词典配置
+  #ambiguity: http,file,jar,class,jdbc 都支持
+  ambiguity: /usr/share/elasticsearch/config/analysis-ansj/library/ambiguity.dic
+  ambiguity_empty: /usr/share/elasticsearch/config/analysis-ansj/library/ambiguity_empty.dic
+  #ambiguity: http://mob.test.betago2016.com/aidata/analysis-ansj/library/ambiguity.dic
+  #ambiguity_empty: http://mob.test.betago2016.com/aidata/analysis-ansj/library/ambiguity_empty.dic
+
+  #同义词词典配置
+  #SynonymsDemo: http,file,jar,class,jdbc 都支持
+  #synonyms_key1: ..
+  synonyms: /usr/share/elasticsearch/config/analysis-ansj/library/SynonymsDemo.dic
+  symonyms_empty: /usr/share/elasticsearch/config/analysis-ansj/library/synonyms_empty.dic
+  #symonyms: http://mob.test.betago2016.com/aidata/analysis-ansj/library/synonyms.dic
+  #symonyms_empty: http://mob.test.betago2016.com/aidata/analysis-ansj/library/synonyms_empty.dic
+
+# 配置自定义分词器
+index:
+  analysis:
+    tokenizer :
+      beta_tokenizer:
+        # 类型支持base_ansj, index_ansj, query_ansj, dic_ansj, nlp_ansj
+        type : dic_ansj   
+        dic: dic
+        stop: stop
+        ambiguity: ambiguity
+        synonyms: SynonymsDemo
+        isNameRecognition: true
+        isNumRecognition: true
+        isQuantifierRecognition: true
+        isRealName: false
+      beta_empty_synonyms_tokenizer:
+        # 类型支持base_ansj, index_ansj, query_ansj, dic_ansj, nlp_ansj
+        type: dic_ansj  
+        dic: dic
+        stop: stop
+        ambiguity: ambiguity
+        synonyms: synonyms_empty
+
+    analyzer:
+      beta_analyzer:
+        type: custom
+        tokenizer: beta_tokenizer
+      beta_empty_symonyms_analyzer:
+        type: custom
+        tokenizer: beta_empty_synonyms_tokenizer
+#默认分词器,索引
+index.analysis.analyzer.default.type: index_ansj
+#默认分词器,查询
+index.analysis.analyzer.default_search.type: query_ansj

@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  jenkins:
+    restart: always
+    image: jenkins
+    container_name : jenkins
+    hostname: jenkins
+    #mem_limit: 1500m
+    stdin_open: true
+    tty: true
+    ports:
+    - "50000:50000"
+    - "10081:8080"
+    volumes:
+    - /data1/Docker/jenkins/jenkins_home:/var/jenkins_home
+    environment:
+      JAVA_OPTS: "-Djava.awt.headless=true -Xms256m -Xmx512m -XX:MaxNewSize=256m -XX:MaxPermSize=256m"
