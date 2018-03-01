@@ -4,7 +4,7 @@
 2、文件解压
 	tar -zxvf ./news_sohusite_xml.full.tar.gz ./
 3、文件转码和获取<content></content>内容
-	cat news_tensite_xml.dat | iconv -f gbk -t utf-8 -c | grep "<content>"  > corpus.txt 
+	cat news_tensite_xml.dat | iconv -f gbk -t utf-8 -c | grep "<content>"  > corpus.txt
 4、安装python第三方插件
 	1、jieba分词
 		pip install jieba
@@ -36,7 +36,7 @@
 	# segment word with jieba
 	fileTrainSeg=[]
 	for i in range(len(fileTrainRead)):
-		
+
 		fileTrainSeg.append([' '.join(list(jieba.cut(fileTrainRead[i][9:-11],cut_all=False)))])
 		#每分词100行，存储到文件
 		if i % 100 == 0 :
@@ -44,7 +44,7 @@
 				for j in range(len(fileTrainSeg)):
 					fW.write(fileTrainSeg.pop()[0].encode('utf-8'))
 					fW.write('\n')
-			
+
 
 	# to test the segment result
 	#PrintListChinese(fileTrainSeg[10])
@@ -109,7 +109,7 @@ index3,metrics3 = model.cosine(u'牛顿')
 index4,metrics4 = model.cosine(u'自动化')
 index5,metrics5 = model.cosine(u'刘亦菲')
 
-# add the index of center word 
+# add the index of center word
 index01=np.where(model.vocab==u'中国')
 index02=np.where(model.vocab==u'清华')
 index03=np.where(model.vocab==u'牛顿')
@@ -145,6 +145,3 @@ for i in index5:
 ax.axis([0,0.8,-0.5,0.5])
 plt.show()
 ```
-	
-	
-	
