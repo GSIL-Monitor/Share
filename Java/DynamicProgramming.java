@@ -1,16 +1,5 @@
-# China-block
-## P2P
-### Kademlia算法
-[Kademlia算法](https://app.yinxiang.com/shard/s48/nl/13169588/0ef61b48-a1bc-4d94-b96a-ce055efb2694)\
-[Kademlia for python](https://github.com/bmuller/kademlia)
-```python
+package main;
 
-```
-
-
-
-# 动态规划
-```java
 import org.apache.commons.math3.util.FastMath;
 
 /**
@@ -144,20 +133,3 @@ public class DynamicProgramming {
         return f[size];
     }
 }
-```
-## 背包问题
-
-## 
-
-# 分类、回归
-
-# 相似度算法 tf*idf
-
-# 贪心穷尽
-
-# 最小化 凸优化问题 
-
-# 遗传算法
-
-# N* 等寻到算法
-

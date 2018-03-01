@@ -1,0 +1,73 @@
+phantomjs:
+  image: 'binux/pyspider:latest'
+  command: phantomjs
+  cpu_shares: 512
+  environment:
+    - 'EXCLUDE_PORTS=5000,23333,24444'
+  expose:
+    - '25555'
+  mem_limit: 512m
+  restart: always
+phantomjs-lb:
+  image: 'dockercloud/haproxy:latest'
+  links:
+    - phantomjs
+  restart: always
+
+fetcher:
+  image: 'binux/pyspider:latest'
+  command: '--message-queue "redis://10.21.0.7:6379/1" --phantomjs-proxy "phantomjs:80" fetcher --xmlrpc'
+  cpu_shares: 512
+  environment:
+    - 'EXCLUDE_PORTS=5000,25555,23333'
+  links:
+    - 'phantomjs-lb:phantomjs'
+  mem_limit: 128m
+  restart: always
+fetcher-lb:
+  image: 'dockercloud/haproxy:latest'
+  links:
+    - fetcher
+  restart: always
+
+processor:
+  image: 'binux/pyspider:latest'
+  command: '--projectdb "sqlalchemy+postgresql+projectdb://binux@10.21.0.7/projectdb" --message-queue "redis://10.21.0.7:6379/1" processor'
+  cpu_shares: 512
+  mem_limit: 256m
+  restart: always
+
+result-worker:
+  image: 'binux/pyspider:latest'
+  command: '--taskdb "sqlalchemy+postgresql+taskdb://binux@10.21.0.7/taskdb"  --projectdb "sqlalchemy+postgresql+projectdb://binux@10.21.0.7/projectdb" --resultdb "sqlalchemy+postgresql+resultdb://binux@10.21.0.7/resultdb" --message-queue "redis://10.21.0.7:6379/1" result_worker'
+  cpu_shares: 512
+  mem_limit: 256m
+  restart: always
+
+webui:
+  image: 'binux/pyspider:latest'
+  command: '--taskdb "sqlalchemy+postgresql+taskdb://binux@10.21.0.7/taskdb"  --projectdb "sqlalchemy+postgresql+projectdb://binux@10.21.0.7/projectdb" --resultdb "sqlalchemy+postgresql+resultdb://binux@10.21.0.7/resultdb" --message-queue "redis://10.21.0.7:6379/1" webui --max-rate 0.2 --max-burst 3 --scheduler-rpc "http://o4.i.binux.me:23333/" --fetcher-rpc "http://fetcher/"'
+
+  cpu_shares: 512
+  environment:
+    - 'EXCLUDE_PORTS=24444,25555,23333'
+  links:
+    - 'fetcher-lb:fetcher'
+  mem_limit: 256m
+  restart: always
+webui-lb:
+  image: 'dockercloud/haproxy:latest'
+  links:
+    - webui
+  restart: always
+
+nginx:
+  image: 'nginx'
+  links:
+    - 'webui-lb:HAPROXY'
+  ports:
+    - '0.0.0.0:80:80'
+  volumes:
+    - /home/binux/nfs/profile/nginx/nginx.conf:/etc/nginx/nginx.conf
+    - /home/binux/nfs/profile/nginx/conf.d/:/etc/nginx/conf.d/
+  restart: always

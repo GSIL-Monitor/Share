@@ -6,7 +6,12 @@
 # 启动/停止/重启/运行 -- start/stop/restart/run
 > docker restart nginx
 # 创建和运行容器
+> docker rm [容器name/id] # 删除容器
+> docker rmi [镜像name/id] # 删除镜像
 > docker run --privileged=true -p80:80 -v /root/nginx_docker/www:/www -v /root/nginx.conf:/etc/nginx/nginx.conf --name nginx -d docker.io/nginx
+# docker清理占用卷
+# 如果你的docker目录仍然占据着大量空间，那可能是因为多余的卷占用了你的磁盘。RM命令的-v命令通常会处理这个问题。但有时，如果你关闭容器不会自动删除容器，VFS目录将增长很快。我们可以通过删除不需要的卷来恢复这个空间。要做到这一点，有一个Docker镜像，你可以使用如下命令来运行它：
+> docker run -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker:/var/lib/docker --rm martin/docker-cleanup-volumes
 ```
 
 ## Docker-compose
@@ -169,22 +174,35 @@ upstream demo{
 > sshpass -p 123 scp -r root@10.25.13.3:/home/LucenceIndexDic /home/LucenceIndexDic
 
 ```
-### rsync
-```cmd
+### rsync/Fabric
 
-
+>* Rsync（remote synchronize）是一个远程数据同步工具，可通过LAN/WAN快速同步多台主机间的文件。Rsync使用所谓的“Rsync算法”来使本地和远程两个主机之间的文件达到同步，这个算法只传送两个文件的不同部分，而不是每次都整份传送，因此速度相当快。
+>* 安装配置参考：[Linux-Rsync服务器/客户端搭建实战](https://www.cnblogs.com/JohnABC/p/6203524.html)
+>* Fabric参考：[Share-Python Fabric](todo file)
 ```
 ## 文件下载
 ### wget
 ```cmd
 # wget [url] --user [user] --password [passwd]
 > wget http://wxp.betago2016.com
+> wget http://www.sogou.com/labs/sogoudownload/SogouCS/news_sohusite_xml.full.tar.gz --user asd@163.com --password }z094rIazNwe8h8k
 
 ```
 
 ### aria2
-```cmd
-
+```bash
+> aria2c http://xxx.com
+# 使用aria2的分段和多线程下载功能可以加快文件的下载速度，对于下载大文件时特别有用。-x 分段下载，-s 多线程下载，如：
+> aria2c -s 2 -x 2 http://xx.com/xx
+# 种子和磁力下载：
+> aria2c 'xxx.torrnet'
+> aria2c '磁力链接'
+# 列出种子内容
+> aria2c -S xxx.torrent
+# 下载种子内编号为1、4、5、6、7的文件，如：
+> aria2c --select-file=1,4-7 xxx.torrent
+# 设置bt端口
+> aria2c --listen-port=3653 'xxx.torrent'
 ```
 ## HTTP请求
 ### curl
@@ -229,7 +247,7 @@ gg=G                        格式化，自动对齐
 # 将行首的#号去掉
 > sed 's/^#//g' test.txt | cat -n
 ```
-## 文件查找
+## 资源查看
 ```cmd
 > df -lh # 磁盘占用
 > free -lh # 内存占用
@@ -239,6 +257,7 @@ gg=G                        格式化，自动对齐
 > du . -h --max-depth=2 # 统计当前目录所有目录、文件大小，深度为2
 > ps -ef | grep java # 查看进程信息
 > ps -aux --sort %mem #根据内存排序
+> ps -aux --sort %cpu #根据cpu排序
 > top -s | grep java 查看进程信息
 > kill -9 $(pidof 进程名关键字) #根据进程名称杀死进程
 ```
@@ -247,7 +266,7 @@ gg=G                        格式化，自动对齐
 > netstat -tln #查看所有开放的端口  
 > netstat -anlp | grep 8080 # 查看8080端口
 > telnet 114.215.222.138 9999 #测试远程端口是否连通
-> lsof -i tcp:80  #Centos查看端口占用情况命令，比如查看80端口占用情况使用如下命令：
+> lsof -i tcp:80  #查看80端口占用情况
 ```
 
 ## 压缩/解压
@@ -257,7 +276,7 @@ Usage: tar [OPTION...] [FILE]...
 # 压缩
 > tar -cvzf temp.tar ./dic 
 # 解压
-tar -zxvf temp.tar
+> tar -zxvf temp.tar
 ```
 ### zip
 ```cmd
@@ -266,9 +285,9 @@ Usage: unzip [-Z] [-opts[modifiers]] file[.zip] [list] [-x xlist] [-d exdir]
   file[.zip] may be a wildcard.  -Z => ZipInfo mode ("unzip -Z" for usage).
 Usage: zip [-options] [-b path] [-t mmddyyyy] [-n suffixes] [zipfile list] [-xi list]
 # 压缩
-zip -r mydata.zip mydata
+> zip -r mydata.zip mydata
 # 解压
-unzip temp.zip
+> unzip temp.zip
 ```
 # 定时任务 corn
 ```cmd
@@ -295,6 +314,14 @@ unzip temp.zip
 # 日期
 > today=`date +"%Y-%m-%d %H:%M:%S:%s"`
 > echo ${today} # 2018-02-27 16:46:02:1519721162
+# 使用脚本部署maven项目
+#!/bin/sh
+git pull
+mvn clean package -DskipTests=true -P sh
+time=`date +%s`
+cp /usr/local/tomcat/webapps/Robot.war /home/local/projects/back/Robot.${time}.war
+mv target/Robot.war /usr/local/tomcat/webapps/Robot.war
+echo 'success!'
 ```
 # ElasticSearch
 ```cmd
@@ -302,12 +329,18 @@ unzip temp.zip
 > curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{"query":{"bool":{"must":[{"term":{"question":"你好"}}],"must_not":[],"should":[]}},"from":0,"size":10,"sort":[],"aggs":{}}' 'http://10.18.0.9:9200/qa_bm/_search'
 ```
 
-
 # JHipster
+```bash
+# 获取镜像文件
+> docker pull docker.io/jhipster/jhipster
+# 创建启动容器
+> docker container run --name jhipster -v ~/jhipster:/home/jhipster/app -v ~/.m2:/home/jhipster/.m2 -p 8080:8080 -p 9000:9000 -p 3001:3001 -d -t jhipster/jhipster
+```
+- [] 代码生成
 
 # Git
 ```cmd
-# 区分远端分支和本地分支
+# 区分远端分支和本地分支，测试分支和正式分支
 > git init                                          # 初始化本地git仓库（创建新仓库）
 > git clone git+ssh://git@192.168.53.168/VT.git     # clone远程仓库
 > git status                                        # 查看当前版本状态（是否修改）
@@ -338,3 +371,44 @@ unzip temp.zip
 # reset
 > git reset --hard <head^>                          # 强制回退到版本号，清空未提交
 ``` 
+# 内网环境
+>* VPN(Virtual Private Network)，即虚拟专用网或虚拟私用网，是指利用开放的公共网络资源建立私有专用传输通道。而我们提供的VPN就是使客户利用internet互联网这个公共网络建立建立客户的个人电脑-VPN服务器之见的私有专用传输通道。连接VPN后客户的所有网络数据都将通过这个通道进行传输。严格来说VPN并不是代理，但大家都用它来实现代理的功能，所以大家习惯性称为VPN代理。所有的网络数据都会通过vpn通道传输，同等网络环境下速度快于代理。
+>* Sock(socket security,SOCKS)是一种基于传输层的网络代理协议。对于各种基于 TCP/IP的应用层协议都能够适应。它能够忠实地转发客户端-服务器打的通讯包，完成协议本来要完成的功能。现在的协议是v5，也就是Scok5协议。使用Scok5协议的代理服务器即称为Sock5代理。用户可以选择哪些域名可以绕过代理。
+```cmd
+VPN主要有PPTP，L2TP，IPSEC，SSL等几种VPN技术。
+    PPTP:Point to Point Protocol Tunnel Protocol 
+    L2TP: Layer 2 Tunnel Protocol
+代理分为透明代理、匿名代理和高匿代理
+透明代理：
+    REMOTE_ADDR = Proxy IP
+    HTTP_VIA = Proxy IP
+    HTTP_X_FORWARDED_FOR = Your IP
+    透明代理虽然可以直接“隐藏”你的IP地址，但是还是可以从HTTP_X_FORWARDED_FOR来查到你是谁。
+匿名代理(Anonymous Proxy)
+    REMOTE_ADDR = proxy IP
+    HTTP_VIA = proxy IP
+    HTTP_X_FORWARDED_FOR = proxy IP
+    匿名代理比透明代理进步了一点：别人只能知道你用了代理，无法知道你是谁。还有一种混淆代理是：HTTP_X_FORWARDED_FOR = Random IP address，使用假IP伪装。
+高匿代理(Elite proxy或High Anonymity Proxy)
+    REMOTE_ADDR = Proxy IP
+    HTTP_VIA = not determined
+    HTTP_X_FORWARDED_FOR = not determined
+    可以看出来，高匿代理让别人根本无法发现你是在用代理，所以是最好的选择。
+```
+## VPN
+具体参考[DockerHub-kylemanna/openvpn](https://hub.docker.com/r/kylemanna/openvpn/)
+```bash
+# 使用docker镜像
+> docker volume create --name $OVPN_DATA
+> docker run -v $OVPN_DATA:/etc/openvpn --rm kylemanna/openvpn ovpn_genconfig -u udp://VPN.SERVERNAME.COM
+> docker run -v $OVPN_DATA:/etc/openvpn --rm -it kylemanna/openvpn ovpn_initpki
+```
+## 代理-Socket5
+具体参考 [自建SS服务器教程](https://app.yinxiang.com/shard/s48/nl/13169588/64ea6fe0-bc46-40da-9392-be395eea44c6)
+```bash
+# 使用ShadowSocksR代理
+# 获取自动安装配置脚本
+> wget -N --no-check-certificate https://softs.fun/Bash/ssr.sh && chmod +x ssr.sh && bash ssr.sh
+```
+
+###### 问题排查，指标监控

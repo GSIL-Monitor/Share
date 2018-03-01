@@ -15,7 +15,6 @@ url = 'http://wxp.betago2016.com/api/chat'
 
 def getQuestion(questionUrl):
     header = {
-        "Cookie": 'test_cookie_enable=null; WDTKID=3020c7f000bea17c; __guid=9114931.286134861474751420.1517370288600.89; count=1; monitor_count=1; __sid=9114931.2664963926026373600.1517370288644.2297; __gid=9114931.953351029.1517370288647.1517370288647.1; __huid=11NR%252FDG1KQPeicE5i0Z%252Bqz0Y7btWoFPcpLUYe6eEc7oYk%253D; __autoShowTip=showHost:wenda.so.com',
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"
     }

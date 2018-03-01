@@ -13,6 +13,8 @@ class MainWindow(QMainWindow):
         self.ui = uic.loadUi('mainwindow.ui')
         self.ui.closeEvent = self.closeEvent
         self.ui.pushButton.clicked.connect(self.btnClickEvent)
+        # 调用函数需要其他参数使用lambda
+        # self.ui.pushButton.clicked.connect(lambda: self.btnClickEvent(1))
         self.ui.show()
 
     def btnClickEvent(self, event):
