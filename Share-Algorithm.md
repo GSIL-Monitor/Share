@@ -11,6 +11,7 @@
 
 # 动态规划
 ```java
+// TODO 定义状态转义方程
 import org.apache.commons.math3.util.FastMath;
 
 /**
@@ -160,4 +161,7 @@ public class DynamicProgramming {
 # 遗传算法
 
 # N* 等寻到算法
+
+[各类算法](https://algorithm.yuanbin.me/zh-hans/dynamic_programming/distinct_subsequences.html)
+[各类算法](https://github.com/billryan/algorithm-exercise)
 

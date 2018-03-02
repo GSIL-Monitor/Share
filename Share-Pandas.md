@@ -2593,14 +2593,6 @@ plt.gca().set_aspect("equal")
 plt.show()
 ```
 
-
-
-
-    <matplotlib.contour.QuadContourSet at 0xc3f3240>
-
-
-
-
 ![png](output_58_1.png)
 
 

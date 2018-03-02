@@ -12,6 +12,27 @@
 # docker清理占用卷
 # 如果你的docker目录仍然占据着大量空间，那可能是因为多余的卷占用了你的磁盘。RM命令的-v命令通常会处理这个问题。但有时，如果你关闭容器不会自动删除容器，VFS目录将增长很快。我们可以通过删除不需要的卷来恢复这个空间。要做到这一点，有一个Docker镜像，你可以使用如下命令来运行它：
 > docker run -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker:/var/lib/docker --rm martin/docker-cleanup-volumes
+
+# 备份镜像
+> Usage
+    docker save [OPTIONS] IMAGE [IMAGE...]
+# 导出golang镜像
+> sudo docker save --output golang.tar golang:1.2
+# 从本地导入镜像
+> Usage
+    docker load [OPTIONS]
+# 导入golang镜像
+> sudo docker load --input golang.tar
+# 导出容器快照
+> Usage
+     docker export [OPTIONS] CONTAINER
+# 导出hello容器快照
+> sudo docker export --output hello.tar
+# 从容器快照导入镜像
+> Usage
+    docker import [OPTIONS] URL|- [REPOSITORY[:TAG]]
+# 导入hello快照，并制定镜像标签为hello:1.0
+> cat hello.tar | sudo docker import - hello:1.0
 ```
 
 ## Docker-compose
@@ -331,12 +352,26 @@ echo 'success!'
 
 # JHipster
 ```bash
+## Docker 方式
 # 获取镜像文件
 > docker pull docker.io/jhipster/jhipster
 # 创建启动容器
 > docker container run --name jhipster -v ~/jhipster:/home/jhipster/app -v ~/.m2:/home/jhipster/.m2 -p 8080:8080 -p 9000:9000 -p 3001:3001 -d -t jhipster/jhipster
+
+## 本地方式
+#下载jhipster-registry源码
+> git clone https://github.com/jhipster/jhipster-registry.git
+#进入 jhipster-registry 目录
+> cd jhipster-registry
+# 创建项目 参考[GitBook - JHipster](https://jh.jiankangsn.com/ch1)
+> yo jhipster
+# 使用 JDI Studio生成Entity
+# [JDI Studio]https://start.jhipster.tech/jdl-studio/
+# 导入entity
+> yo jhipster:import-jdl jhipster-jdl.jh
+#运行 jhipster-registry程序
+> mvnw
 ```
-- [] 代码生成
 
 # Git
 ```cmd
@@ -409,6 +444,22 @@ VPN主要有PPTP，L2TP，IPSEC，SSL等几种VPN技术。
 # 使用ShadowSocksR代理
 # 获取自动安装配置脚本
 > wget -N --no-check-certificate https://softs.fun/Bash/ssr.sh && chmod +x ssr.sh && bash ssr.sh
+```
+# 配置SSH登录
+```bash
+# ServerA SSH登录ServerB
+# 1、ServerB上生成密钥对
+# -t 指定密钥类型，默认即 rsa ，可以省略
+# -C 设置注释文字，比如你的邮箱
+> ssh-keygen -t rsa -C  'your email@domain.com'
+# 2、拷贝到公钥到ServerA
+> scp ~/.ssh/id_rsa.pub username@hostname:~/ #将公钥文件复制至ssh服务器
+# scp ~/.ssh/id_rsa.pub username@hostname:~/.ssh/authorized_keys # 简略操作，省略步骤3
+# 3、在ServerA上将id_rsa.pub拷贝到 ~/.ssh/authorized_keys
+> ssh username@hostname #使用用户名和密码方式登录至ssh服务器
+> mkdir .ssh  #若.ssh目录已存在，可省略此步
+> cat id_rsa.pub >> .ssh/authorized_keys  #将公钥文件id_rsa.pub文件内容追加到authorized_keys文件
+
 ```
 
 ###### 问题排查，指标监控
