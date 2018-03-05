@@ -101,3 +101,132 @@ public BigDecimal divide(BigDecimal divisor)
 public BigDecimal divide(BigDecimal divisor, int roundingMode)
 public BigDecimal round(MathContext.DECIMAL32)
 ```
+#　RPC通信
+
+# 安全问题
+## 防重放限制
+参考：[API的防重放机制](https://app.yinxiang.com/shard/s48/nl/13169588/179fb353-1df2-4de5-b596-9b2a7c347da7)
+## CSRF 安全过滤/跨站攻击/异常请求/后端数据校验
+参考：[使用spring validation完成数据后端校验](https://app.yinxiang.com/shard/s48/nl/13169588/1bbcca2c-4583-436b-90f1-a61c412ad44c)
+## 防刷
+参考：[基于Redis的防刷票、防刷短信、及所有防刷系统的设计](https://app.yinxiang.com/shard/s48/nl/13169588/14c94114-a2c0-4747-a04f-1c3e2a81de3d)
+## XSS攻击和HttpOnly防止js读取cookie
+```java
+public SimpleCookie rememberMeCookie() {
+    SimpleCookie cookie = new SimpleCookie("rememberMe");
+    // 设置HttpOnly为true
+    cookie.setHttpOnly(true);
+    cookie.setMaxAge(604800);
+    return cookie;
+}
+```
+# Spring-Data
+## Redis
+## Elastic-Search
+## neo4j
+
+# JWT / OAuth 2.0
+## JWT
+```xml
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt</artifactId>
+</dependency>
+```
+```java
+
+static final Logger LOGGER = LoggerFactory.getLogger(JwtHelper.class);
+/**
+  * 生成签名
+  * @param secret
+  * @param payloads
+  * @return
+  */
+public static String encode(String secret, Map<String, Object> payloads) {
+    String base64Secret = Base64.getEncoder().encodeToString(secret.getBytes());
+    return Jwts.builder().signWith(SignatureAlgorithm.HS256, base64Secret).setClaims(payloads)
+            .compressWith(CompressionCodecs.DEFLATE).compact();
+}
+
+/**
+ * 
+ * @param secret
+ * @param claimsJws
+ * @return {@link ApiConfig#ACCESS_USER_ID}, {@link ApiConfig#CHANNEL_ID}
+ * @throws SignatureException
+ *             签名失败（1. secret 错误；2. claimsJws 篡改；）
+ */
+public static Map<String, Object> decode(String secret, String claimsJws) {
+    try {
+        String base64Secret = Base64.getEncoder().encodeToString(secret.getBytes());
+        Map<String, Object> loginUserMap = Jwts.parser().setSigningKey(base64Secret).parseClaimsJws(claimsJws)
+                .getBody();
+        return loginUserMap;
+    } catch (Exception e) {
+        throw new BetaException(String.format("验签失败: secret=%s, claims=%s", secret, claimsJws), e);
+    }
+}
+
+/**
+ * 验证签名
+ * 
+ * @param secret
+ * @param claimsJws
+ * @return
+ */
+public static boolean signed(String secret, String claimsJws) {
+    try {
+        decode(secret, claimsJws);
+        return true;
+    } catch (SignatureException e) {
+        LOGGER.warn("验签失败 {} {}", secret, claimsJws);
+    } catch (Exception e) {
+        LOGGER.error("验签失败", e);
+    }
+    return false;
+}
+
+/**
+ * 在cookie中添加jwt回写
+ * 
+ * @param request
+ * @param response
+ * @param loginUser
+ * @return
+ */
+public void saveLoginCookie(HttpServletRequest request, HttpServletResponse response, LoginUser loginUser)
+            throws Exception {
+
+    int expire = SECOND_7_DAYS;
+    //第一次生成jwtLoginToken
+    String jwtLoginToken = JwtHelper.encode(betaProperties.getSecurity().getLoginSecret(),
+            JacksonUtil.toMap(loginUser));
+    CookieHelper.addCookieByDomain(request, response, ApiConfig.ACCESS_TOKEN, jwtLoginToken, expire);
+
+    String accessUserId = DesHelper.encrypt(loginUser.getUserId().toString(), ApiConfig.ENCRYPT_USER_ID_KEY);
+    CookieHelper.addCookieByDomain(request, response, ApiConfig.ACCESS_USER_ID, accessUserId, expire);
+
+    //扩展记录来自那个系统
+    String userFrom = loginUser.getFrom().toString();
+    CookieHelper.addCookieByDomain(request, response, ApiConfig.USER_FROM_SYS, userFrom, expire);
+}
+
+ /**
+ * jwt获取当前登陆用户
+ * 
+ * @return
+ */
+public LoginUser getCurrentUser() {
+    HttpServletRequest request = this.getCurrentRequest();
+    String jwt = CookieHelper.getCookieValueByName(request, ApiConfig.ACCESS_TOKEN);
+    if(null!=jwt&&""!=jwt){
+    	Map<String, Object> currentUserMap = JwtHelper.decode(betaProperties.getSecurity().getLoginSecret(), jwt);
+    	LoginUser loginUser = JacksonUtil.fromMapToObj(currentUserMap, LoginUser.class);
+    	return loginUser;
+    }else{
+    	return null;
+    }
+}
+```
+
+# MyCat
