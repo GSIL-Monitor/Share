@@ -39,26 +39,27 @@ def func(data):
 
 
 def multi_task():
-    global results, err_data
+    global results
     with engine.connect() as conn:
         df = pd.read_sql("select id,question,answer from ai_question_answer limit 500", conn)
         df.index = df['id']
         process_size = 4  # 进程数量(默认cpu核数)
         pool = Pool(process_size)
-        size = int(df.shape[0] / process_size) + 1
         results = pd.DataFrame()
         err_data = pd.DataFrame()
         for i in range(process_size):
-            start = i * size
-            sub_df = df.iloc[start:start + size][:]
             # map_async异步执行，io密集型可以用协程，计算密集型用进程
-            result = pool.map_async(get_ai_answer, [sub_df], callback=func)
+            pool.map_async(get_ai_answer, [df, 4], callback=callBackFunc)
         pool.close()
         pool.join()
         results = results.sort_values(by='id')  # 排序
         results.to_excel('output.xls', index=False)
-        err_data.to_excel('err.xls', index=False)
         print u'错误率：%f' % (err_data.shape[0] * 1.0 / df.shape[0])
+
+
+def callBackFunc(data):
+    global results
+    results = results.append(data)
 
 
 if __name__ == "__main__":

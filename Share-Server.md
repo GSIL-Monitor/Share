@@ -1,5 +1,23 @@
+# Share - 运维篇
+# 配置SSH登录
+```bash
+# ServerA SSH登录ServerB
+# 1、ServerB上生成密钥对
+# -t 指定密钥类型，默认即 rsa ，可以省略
+# -C 设置注释文字，比如你的邮箱
+> ssh-keygen -t rsa -C  'your email@domain.com'
+# 2、拷贝到公钥到ServerA
+> scp ~/.ssh/id_rsa.pub username@hostname:~/ #将公钥文件复制至ssh服务器
+# scp ~/.ssh/id_rsa.pub username@hostname:~/.ssh/authorized_keys # 简略操作，省略步骤3
+# 3、在ServerA上将id_rsa.pub拷贝到 ~/.ssh/authorized_keys
+> ssh username@hostname #使用用户名和密码方式登录至ssh服务器
+> mkdir .ssh  #若.ssh目录已存在，可省略此步
+> cat id_rsa.pub >> .ssh/authorized_keys  #将公钥文件id_rsa.pub文件内容追加到authorized_keys文件
+
+```
 # Docker相关
 ## Docker
+参考[Docker — 从入门到实践](https://yeasy.gitbooks.io/docker_practice/)
 ```cmd
 # 查看已创建的容器相关配置
 > docker inspect nginx
@@ -195,19 +213,17 @@ upstream demo{
 > sshpass -p 123 scp -r root@10.25.13.3:/home/LucenceIndexDic /home/LucenceIndexDic
 
 ```
-### rsync/Fabric
+### rsync
 
 >* Rsync（remote synchronize）是一个远程数据同步工具，可通过LAN/WAN快速同步多台主机间的文件。Rsync使用所谓的“Rsync算法”来使本地和远程两个主机之间的文件达到同步，这个算法只传送两个文件的不同部分，而不是每次都整份传送，因此速度相当快。
 >* 安装配置参考：[Linux-Rsync服务器/客户端搭建实战](https://www.cnblogs.com/JohnABC/p/6203524.html)
->* Fabric参考：[Share-Python Fabric](todo file)
-```
+
 ## 文件下载
 ### wget
 ```cmd
 # wget [url] --user [user] --password [passwd]
 > wget http://wxp.betago2016.com
 > wget http://www.sogou.com/labs/sogoudownload/SogouCS/news_sohusite_xml.full.tar.gz --user asd@163.com --password }z094rIazNwe8h8k
-
 ```
 
 ### aria2
@@ -254,6 +270,7 @@ n                           下一个匹配(如果是/搜索，则是向下的�
 gg=G                        格式化，自动对齐
 ```
 ### sed
+参考[man-sed命令](http://man.linuxde.net/sed)
 ```cmd
 # 删除空白行：
 > sed '/^$/d' file
@@ -345,12 +362,20 @@ mv target/Robot.war /usr/local/tomcat/webapps/Robot.war
 echo 'success!'
 ```
 # ElasticSearch
+参考[Elasticsearch: 权威指南](https://www.elastic.co/guide/cn/elasticsearch/guide/current/index.html)
 ```cmd
 # es curl查询
+# question term为“你好”
 > curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{"query":{"bool":{"must":[{"term":{"question":"你好"}}],"must_not":[],"should":[]}},"from":0,"size":10,"sort":[],"aggs":{}}' 'http://10.18.0.9:9200/qa_bm/_search'
+# question str包含“你好” & classify term为“1”
+> {"query":{"bool":{"must":[{"query_string":{"default_field":"question","query":"你好"}},{"term":{"classify":"1"}}],"must_not":[],"should":[]}},"from":0,"size":10,"sort":[],"aggs":{}}
+# 使用分析器beta_analyzer进行语句分析
+> curl -XGET 'http://10.18.100.3:9200/qa_v2/_analyze?analyzer=beta_analyzer' -d '你们有什么事情'
+
 ```
 
 # JHipster
+参考[JHipster开发笔记](https://jh.jiankangsn.com/)
 ```bash
 ## Docker 方式
 # 获取镜像文件
@@ -372,7 +397,6 @@ echo 'success!'
 #运行 jhipster-registry程序
 > mvnw
 ```
-
 # Git
 ```cmd
 # 区分远端分支和本地分支，测试分支和正式分支
@@ -410,10 +434,10 @@ echo 'success!'
 >* VPN(Virtual Private Network)，即虚拟专用网或虚拟私用网，是指利用开放的公共网络资源建立私有专用传输通道。而我们提供的VPN就是使客户利用internet互联网这个公共网络建立建立客户的个人电脑-VPN服务器之见的私有专用传输通道。连接VPN后客户的所有网络数据都将通过这个通道进行传输。严格来说VPN并不是代理，但大家都用它来实现代理的功能，所以大家习惯性称为VPN代理。所有的网络数据都会通过vpn通道传输，同等网络环境下速度快于代理。
 >* Sock(socket security,SOCKS)是一种基于传输层的网络代理协议。对于各种基于 TCP/IP的应用层协议都能够适应。它能够忠实地转发客户端-服务器打的通讯包，完成协议本来要完成的功能。现在的协议是v5，也就是Scok5协议。使用Scok5协议的代理服务器即称为Sock5代理。用户可以选择哪些域名可以绕过代理。
 ```cmd
-VPN主要有PPTP，L2TP，IPSEC，SSL等几种VPN技术。
+1、VPN主要有PPTP，L2TP，IPSEC，SSL等几种VPN技术。
     PPTP:Point to Point Protocol Tunnel Protocol 
     L2TP: Layer 2 Tunnel Protocol
-代理分为透明代理、匿名代理和高匿代理
+2、代理分为透明代理、匿名代理和高匿代理
 透明代理：
     REMOTE_ADDR = Proxy IP
     HTTP_VIA = Proxy IP
@@ -430,7 +454,7 @@ VPN主要有PPTP，L2TP，IPSEC，SSL等几种VPN技术。
     HTTP_X_FORWARDED_FOR = not determined
     可以看出来，高匿代理让别人根本无法发现你是在用代理，所以是最好的选择。
 ```
-## VPN
+## OpenVPN
 具体参考[DockerHub-kylemanna/openvpn](https://hub.docker.com/r/kylemanna/openvpn/)
 ```bash
 # 使用docker镜像
@@ -445,21 +469,30 @@ VPN主要有PPTP，L2TP，IPSEC，SSL等几种VPN技术。
 # 获取自动安装配置脚本
 > wget -N --no-check-certificate https://softs.fun/Bash/ssr.sh && chmod +x ssr.sh && bash ssr.sh
 ```
-# 配置SSH登录
-```bash
-# ServerA SSH登录ServerB
-# 1、ServerB上生成密钥对
-# -t 指定密钥类型，默认即 rsa ，可以省略
-# -C 设置注释文字，比如你的邮箱
-> ssh-keygen -t rsa -C  'your email@domain.com'
-# 2、拷贝到公钥到ServerA
-> scp ~/.ssh/id_rsa.pub username@hostname:~/ #将公钥文件复制至ssh服务器
-# scp ~/.ssh/id_rsa.pub username@hostname:~/.ssh/authorized_keys # 简略操作，省略步骤3
-# 3、在ServerA上将id_rsa.pub拷贝到 ~/.ssh/authorized_keys
-> ssh username@hostname #使用用户名和密码方式登录至ssh服务器
-> mkdir .ssh  #若.ssh目录已存在，可省略此步
-> cat id_rsa.pub >> .ssh/authorized_keys  #将公钥文件id_rsa.pub文件内容追加到authorized_keys文件
 
+# 水平/垂直扩展
+## 一致性hash算法
+参考[一致性hash算法](https://yikun.github.io/2016/06/09/%E4%B8%80%E8%87%B4%E6%80%A7%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95%E7%9A%84%E7%90%86%E8%A7%A3%E4%B8%8E%E5%AE%9E%E8%B7%B5/)
 ```
+[0-2^32]环形，hash后顺时针找下一个
+问题：1、服务节点分布不均匀导致节点分布不均匀
+解决：1、添加若干虚节点,虚节点映射到服务节点(两次映射，虚节点增加仍然会产生数据较大量移动)
+     2、参考OpenStack的Swift组件中，使用了一种比较特殊的方法来解决分布不均的问题，改进了这些数据分布的算法，将环上的空间均匀的映射到一个线性空间，这样，就保证分布的均匀性。
+```
+![png](https://cloud.githubusercontent.com/assets/1736354/16341297/fe155f98-3a5e-11e6-834d-193e6f85afcd.png)\
+![png](http://afghl.github.io/images/consistent-hash(3).jpeg)\
+(普通hash算法)
+![png](http://afghl.github.io/images/consistent-hash(5).jpg)
+(采用虚节点后映射方式)
+![png](https://cloud.githubusercontent.com/assets/1736354/16341455/b01139ec-3a5f-11e6-965a-070f5c4c0afa.png)
+(线性映射)
 
-###### 问题排查，指标监控
+## 分库分表
+参考[中间件MyCat](https://www.jianshu.com/p/cd23e6ef9305)
+
+
+## 消息队列MQ(略)
+
+## 分布式事务(略)
+
+## 集群资源调度(略)

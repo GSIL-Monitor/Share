@@ -1329,7 +1329,7 @@ plt.show()
 
 
 
-![png](output_30_3.png)
+![png](https://raw.githubusercontent.com/QQ764073652/SharePic/master/pandas/output_30_3.png)
 
 
 
@@ -1340,7 +1340,7 @@ plt.show()
 
 
 
-![png](output_30_5.png)
+![png](https://raw.githubusercontent.com/QQ764073652/SharePic/master/pandas/output_30_5.png)
 
 
 ## 处理nan值 （fillna）
@@ -2593,7 +2593,7 @@ plt.gca().set_aspect("equal")
 plt.show()
 ```
 
-![png](output_58_1.png)
+![png](https://raw.githubusercontent.com/QQ764073652/SharePic/master/pandas/output_58_1.png)
 
 
 

@@ -43,6 +43,8 @@ def pgPlot(x, y, title=None, background='w'):
     startPgQTimer()
     pg.QtGui.QGuiApplication.exec_()
 
+def pgPlot2(x,y):
+    pg.plot(x, y, title="Graph01", background='w')
 
 # -- 更新数据
 def updateGraph():
@@ -64,11 +66,14 @@ def startPgQTimer():
 if __name__ == '__main__':
     x = np.asarray(range(1, 100))
     y = x ** 2
-    # pgPlot(x, y)
-    fig = plt.figure(figsize=(8, 8), dpi=80)
-    plt.plot_date(x, y, xdate=True)
-    plt.show()
+    pgPlot2(x,y)
+    pg.QtGui.QGuiApplication.exec_()
 
+
+    # pgPlot(x, y)
+    # fig = plt.figure(figsize=(8, 8), dpi=80)
+    # plt.plot_date(x, y, xdate=True)
+    # plt.show()
     # pyqtgraph example
     # import pyqtgraph.examples
 

@@ -1,3 +1,4 @@
+# Share - Python篇
 # Wind
 ## WSD数据获取
 ```python
@@ -10,16 +11,15 @@ from WindPy import *
 from sqlalchemy import create_engine
 
 # 获取指定日期基金净值数据
-db_connect_string = 'mysql://betaWR:betaWR123@10.18.0.2:3306/beta_psbc?charset=utf8'
+db_connect_string = 'mysql://user:pass@10.18.0.2:3306/beta_psbc?charset=utf8'
 engine = create_engine(db_connect_string)
+w.start()
 
 raw_data = w.wsd('000001.OF', "nav,NAV_adj", '2017-01-01', '2018-01-01', "")
-w.start()
 with engine.connect() as conn:
     if not raw_data.ErrorCode:
         df = pd.DataFrame(index=raw_data.Times, columns=raw_data.Fields,
                           data=np.array(raw_data.Data).transpose())
-
         df.to_sql("fund_calculate", conn, if_exists="append", index=False)
 ```
 ## WSQ数据订阅
@@ -115,7 +115,7 @@ from PyQt5.QtWidgets import QMessageBox
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
-
+        # 加载UI文件
         self.ui = uic.loadUi('mainwindow.ui')
         self.ui.closeEvent = self.closeEvent
         self.ui.pushButton.clicked.connect(self.btnClickEvent)
@@ -182,9 +182,51 @@ class Ui_TradeWindow(QMainWindow):
 
 ```
 ## pyqtGraph/matplotlib
+### pyqtGraph
+参考[pyqtGraph Document](http://www.pyqtgraph.org/documentation/introduction.html)
 ```python
-# def plot(self, *args, **kwargs):
+# pyqtGraph自带example项目
+import pyqtgraph.examples as example
+example.run()
+```
+```python
+import numpy as np
+import pyqtgraph as pg
+
+def pgPlot(x,y):
+    pg.plot(x, y, title="Graph01", background='w')
+
+if __name__ == '__main__':
+    x = np.asarray(range(1, 100))
+    y = x ** 2
+    pgPlot(x,y)
+    pg.QtGui.QGuiApplication.exec_()
+```
+
+### matplotlib
+参考[matplotlib Document](https://matplotlib.org/gallery/index.html)
+```python
 # def plot_date(x, y, fmt='o', tz=None, xdate=True, ydate=False, hold=None,data=None, **kwargs):
+import numpy as np
+#import matplotlib
+#matplotlib.use('Agg')
+
+import matplotlib.pyplot as plt
+
+# Fixing random state for reproducibility
+np.random.seed(19680801)
+
+
+fig, ax = plt.subplots()
+ax.plot(np.random.rand(20), '-o', ms=20, lw=2, alpha=0.7, mfc='orange')
+ax.grid()
+
+# position bottom right
+fig.text(0.95, 0.05, 'Property of MPL',
+         fontsize=50, color='gray',
+         ha='right', va='bottom', alpha=0.5)
+
+plt.show()
 ```
 # Spider
 ## 使用urllib和xpath
@@ -209,6 +251,7 @@ print(questions)
 
 ```
 ## 轻量级爬虫框架 pySpider
+参考[pySpider中文网](http://www.pyspider.cn/book/pyspider/pyspider-Quickstart-2.html)
 ```bash
 > pip install pyspider
 > pyspider # 启动web UI 
@@ -258,6 +301,7 @@ Commands:
   webui          Run WebUI
 ```
 ## 重量级爬虫框架 scrapy
+参考[Scrapy Document](http://scrapy-chs.readthedocs.io/zh_CN/0.24/intro/overview.html)
 ```
 Scrapy主要包括了以下组件：
     引擎(Scrapy)
@@ -320,11 +364,13 @@ win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP | win32con.MOUSEEVENTF_RIGHTDO
 win32gui.PostMessage(win, win32con.WM_CLOSE, 0, 0)
 ```
 # 装饰器
-## 常用
+参考[python装饰器](http://python.jobbole.com/81683/)
+## 示例
 ```python
 # coding=utf-8
 # 面向切面编程
 import urllib2,json,time,logging
+import functools
 
 handler = logging.StreamHandler()
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -336,6 +382,18 @@ log.setLevel(logging.DEBUG)
 #钉钉webHook接口
 webHook = 'https://oapi.dingtalk.com/robot/send?access_token=[Token]'
 header = {"Content-Type": "application/json"}
+
+# 带返回值的装饰器
+def httpSend(func):
+    # 使用functools.wraps将装饰器的返回值返回,调用方式为 doc = func(*args,**kwargs)
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        url = func(*args, **kwargs)
+        req = urllib2.Request(url=url)
+        response = urllib2.urlopen(req)
+        doc = json.loads(response.read())
+        return doc
+    return wrapper
 
 # httpSend装饰器
 def httpSend(func):
@@ -390,19 +448,88 @@ def get():
 ```
 
 # multiprocessing/asyncio
-##
-```
-multiprocessing 适合cpu密集型任务
-asyncio 适合io密集型任务
-```
-[MultiProcessing Document](https://docs.python.org/2/library/multiprocessing.html)\
-[Asyncio Document](http://python.jobbole.com/87310/)
-```python
 
+>* multiprocessing 多进程，适合cpu密集型任务
+>* asyncio 协程，适合io密集型任务
+
+## multiprocessing
+参考：[MultiProcessing Document](https://docs.python.org/2/library/multiprocessing.html)
+
+
+```python
+from multiprocessing import Pool
+import pandas as pd
+from sqlalchemy import create_engine
+db_connect_string = 'mysql://user:pass@10.18.100.11:3306/beta?charset=utf8'
+engine = create_engine(db_connect_string)
+
+def multi_task():
+    global results
+    with engine.connect() as conn:
+        df = pd.read_sql("select id,question,answer from ai_question_answer limit 500", conn)
+        df.index = df['id']
+        process_size = 4  # 进程数量(默认cpu核数)
+        pool = Pool(process_size)
+        results = pd.DataFrame()
+        err_data = pd.DataFrame()
+        for i in range(process_size):
+            # map_async异步执行，io密集型可以用协程，计算密集型用进程
+            # def map_async(self, func, iterable, chunksize=None, callback=None):
+            # 使用chunksize指定分片数量，这里分4份
+            pool.map_async(get_ai_answer, [df, 4], callback=callBackFunc)
+        pool.close()
+        pool.join()
+        results = results.sort_values(by='id')  # 排序
+        results.to_excel('output.xls', index=False)
+        print u'错误率：%f' % (err_data.shape[0] * 1.0 / df.shape[0])
+
+# 回调函数
+def callBackFunc(data):
+    global results
+    results = results.append(data)
+
+```
+## asyncio
+参考[Asyncio Document](http://python.jobbole.com/87310/)
+
+```python
+import asyncio
+ 
+import time
+ 
+now = lambda: time.time()
+ 
+async def do_some_work(x):
+    print('Waiting: ', x)
+ 
+    await asyncio.sleep(x)
+    return 'Done after {}s'.format(x)
+ 
+async def main():
+    coroutine1 = do_some_work(1)
+    coroutine2 = do_some_work(2)
+    coroutine3 = do_some_work(4)
+ 
+    tasks = [
+        asyncio.ensure_future(coroutine1),
+        asyncio.ensure_future(coroutine2),
+        asyncio.ensure_future(coroutine3)
+    ]
+ 
+    dones, pendings = await asyncio.wait(tasks)
+ 
+    for task in dones:
+        print('Task ret: ', task.result())
+ 
+start = now()
+ 
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())
+ 
+print('TIME: ', now() - start)
 ```
 
 # 网络相关
-## HTTP urllib3
 ## websocker
 ```python
 # -*- coding: utf-8 -*-
@@ -438,11 +565,42 @@ def start():
             data = json.loads(result)
             print(data)
 ```
-# P2P/china-block
+## RPC 远程代码调用 
 ## p2p网络
-```bash
-# 参考kademlia路由表的维护和搜索算法
+参考
+[kademlia算法](https://www.jianshu.com/p/f2c31e632f1d?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation)
+[github-kademlia](https://github.com/bmuller/kademlia)
 ```
+# 恒等率
+x ^ 0 = x
+# 自反
+x ^ y ^ y = x ^ 0 = x
+# 自己与自己的距离为0:
+x ^ x = 0
+# 不同的节点间必有距离:
+x ^ y > 0
+# 交换律，x到y的距离等于y到x的距离:
+x ^ y = y ^ x
+# 从a经b绕到c, 要比直接从a到c距离长:
+a ^ b + b ^ c >= a ^ c
+# 暂时不清楚
+a + b >= a ^ b
+# 符合交换律、结合律
+(a ^ b) ^ (b ^ c) = a ^ c
+下表反映了每个K-桶所储存的信息
+K-桶    储存的距离区间  储存的距离范围 储存比率
+0	      [2^0, 2^1)	    1	        100%
+1	      [2^1, 2^2)	    2-3	        100%
+2	      [2^2, 2^3)	    4-7	        100%
+3	      [2^3, 2^4)	    8-15	    100%
+4	      [2^4, 2^5)	    16-31	    75%
+5	      [2^5, 2^6)	    32-63	    57%
+10	      [2^10, 2^11)      1024-2047	13%
+i	      [2^i, 2^(i+1))    /	        0.75i-3
+```
+![png](https://upload-images.jianshu.io/upload_images/947209-6bdd6e96a80d0780.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/430)
+![png](https://upload-images.jianshu.io/upload_images/947209-1143169c8318a2ff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/666)
+
 ## nat打洞
 ```
  # kademlia节点使用rpc通过udp进行通信，这意味着它能够在nat后面工作。
@@ -456,7 +614,7 @@ def start():
 （7）连接已经建立。两者可以直接通信了。
 ```
 
-# Fabric
+# 远程部署-Fabric
 
 ```python
 #!/usr/bin/env python
@@ -470,14 +628,14 @@ env.user = 'root'
 env.hosts = ['www.example.com'] # 如果有多个主机，fabric会自动依次部署
 
 def pack():
-    ' 定义一个pack任务 '
+    '定义一个pack任务 '
     # 打一个tar包：
     tar_files = ['*.py', 'static/*', 'templates/*', 'favicon.ico']
     local('rm -f example.tar.gz')
     local('tar -czvf example.tar.gz --exclude=\'*.tar.gz\' --exclude=\'fabfile.py\' %s' % ' '.join(tar_files))
 
 def deploy():
-    ' 定义一个部署任务 '
+    '定义一个部署任务 '
     # 远程服务器的临时文件：
     remote_tmp_tar = '/tmp/example.tar.gz'
     tag = datetime.now().strftime('%y.%m.%d_%H.%M.%S')
@@ -504,13 +662,21 @@ def deploy():
     run('%s start' % fcgi)
 ```
 
-# scikit-learn/tesorflow
-Demo项目参考：[data-science-ipython-notebooks](https://github.com/donnemartin/data-science-ipython-notebooks)
-```python
-# version:3.6
-```
+# scikit-learn/tesorflow/keras
+参考：
+[book-TensorFlow技术解析与实战+-+李嘉璇](https://www.jianguoyun.com/p/DQsUj8cQ68fhBhi430U)\
+[data-science-ipython-notebooks](https://github.com/donnemartin/data-science-ipython-notebooks)\
+[github-tensorflow](https://github.com/tensorflow/tensorflow)\
+[github-tensorflow-models](https://github.com/tensorflow/models)\
+[github-karas](https://github.com/keras-team/keras)\
+[document-karas](https://keras-cn.readthedocs.io/en/latest/)\
+todo 网络结构分析：CNN、RNN、LSTM、生成对抗网络、迁移学习……
+# 迁移学习(略)
 
-# 以太坊
+# 公有链平台
+## 以太坊
 参考Solidity在线游戏CryptoZombies(https://cryptozombies.io/zh/)
-# steem
+## steem
 [steem]https://smt.steem.io/
+
+# 回测

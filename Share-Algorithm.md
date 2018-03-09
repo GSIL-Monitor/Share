@@ -165,3 +165,5 @@ public class DynamicProgramming {
 [各类算法](https://algorithm.yuanbin.me/zh-hans/dynamic_programming/distinct_subsequences.html)
 [各类算法](https://github.com/billryan/algorithm-exercise)
 
+# OAuth2.0/JWT
+参考 Share-Java

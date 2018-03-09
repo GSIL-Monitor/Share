@@ -1,5 +1,6 @@
 # coding=utf-8
 import urllib2,json,time,logging
+import functools
 
 handler = logging.StreamHandler()
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -11,6 +12,17 @@ log.setLevel(logging.DEBUG)
 #钉钉webHook接口
 webHook = 'https://oapi.dingtalk.com/robot/send?access_token=[Token]'
 header = {"Content-Type": "application/json"}
+
+# httpSend装饰器
+def httpSend(func):
+    # 使用functools.wraps将装饰器的返回值返回到 data = func(*args, **kwargs),此时data = response
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        data = func(*args, **kwargs)
+        request = urllib2.Request(url=webHook, data=json.dumps(data), headers=header)
+        response = urllib2.urlopen(request)
+        return response
+    return wrapper
 
 # httpSend装饰器
 def httpSend(func):
@@ -69,4 +81,4 @@ def get():
 
 
 if __name__ == '__main__':
-    get()
+    res = get()
