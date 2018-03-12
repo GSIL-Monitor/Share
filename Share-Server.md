@@ -213,6 +213,17 @@ upstream demo{
 > sshpass -p 123 scp -r root@10.25.13.3:/home/LucenceIndexDic /home/LucenceIndexDic
 
 ```
+### rz/sz
+```bash
+> sudo apt-get install lrzsz
+
+Usage: rz [options] [filename.if.xmodem]
+> sudo rz
+
+Usage: sz [options] file ...
+   or: sz [options] -{c|i} COMMAND
+> sudo  sz -be ./app-alone.war
+```
 ### rsync
 
 >* Rsync（remote synchronize）是一个远程数据同步工具，可通过LAN/WAN快速同步多台主机间的文件。Rsync使用所谓的“Rsync算法”来使本地和远程两个主机之间的文件达到同步，这个算法只传送两个文件的不同部分，而不是每次都整份传送，因此速度相当快。

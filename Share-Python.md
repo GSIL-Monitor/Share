@@ -250,6 +250,33 @@ questions = selector.xpath(xpath)
 print(questions)
 
 ```
+## 使用PhantomJS爬取动态网页
+```bash
+# 1、下载PhantomJS，并添加到环境变量
+> http://phantomjs.org/
+# 2、安装selenium
+> pip install selenium
+```
+```python
+# coding:utf-8
+from selenium import webdriver
+
+from lxml import etree
+
+questionUrl = "https://wenda.so.com/c/125?pn=1"
+xpath = '/html/body/div[6]/div[2]/div/div[2]/div[2]/ul/li/div/p/a/text()'
+driver = webdriver.PhantomJS()
+driver.get(questionUrl)
+for i in range(3):
+    result_msg = driver.page_source
+    selector = etree.HTML(result_msg)
+    questions = selector.xpath(xpath)
+    print(questions)
+    # 点击下一页
+    elem = driver.find_element_by_class_name('next')
+    elem.click()
+
+```
 ## 轻量级爬虫框架 pySpider
 参考[pySpider中文网](http://www.pyspider.cn/book/pyspider/pyspider-Quickstart-2.html)
 ```bash
@@ -494,7 +521,6 @@ def callBackFunc(data):
 
 ```python
 import asyncio
- 
 import time
  
 now = lambda: time.time()
