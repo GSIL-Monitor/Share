@@ -736,11 +736,3 @@ def deploy():
 [document-karas](https://keras-cn.readthedocs.io/en/latest/)\
 [迁移学习](https://morvanzhou.github.io/tutorials/machine-learning/ML-intro/2-9-transfer-learning/)\
 todo 网络结构分析：CNN、RNN、LSTM、生成对抗网络、迁移学习……
-
-# 公有链平台
-## 以太坊
-参考Solidity在线游戏CryptoZombies(https://cryptozombies.io/zh/)
-## steem
-[steem]https://smt.steem.io/
-
-# 回测
