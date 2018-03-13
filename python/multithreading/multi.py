@@ -2,7 +2,7 @@
 import json, sys, urllib2
 from multiprocessing import Pool
 
-import pandas as pd
+import Share.python.pandas as pd
 from sqlalchemy import create_engine
 
 reload(sys)

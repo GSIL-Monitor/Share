@@ -46,12 +46,12 @@
 [tightVNC下载](http://www.tightvnc.com/download.php)
 ## VPN/代理 - OpenVPN / Shadow socksR
 [ShadowSocksR下载](https://github.com/shadowsocksrr/shadowsocks-rss)\
-[openVpn项目](https://github.com/OpenVPN/openvpn)\
+[Github-openVpn](https://github.com/OpenVPN/openvpn)\
 [openVpn下载](https://openvpn.net/index.php/download/community-downloads.html)
 ## Http请求 - Postman / curl
 [PostMan下载](https://www.getpostman.com/)\
 [curl下载](https://curl.haxx.se/download.html)\
-[curl项目](https://github.com/curl/curl)
+[Github-curl](https://github.com/curl/curl)
 ## 下载 - aria2 / Resilio Sync
 [aria2下载](https://www.jianguoyun.com/p/DUz9xE8Q68fhBhjmkEU)
 ## 笔记 - Evernote

@@ -1,3 +1,4 @@
+# Share-Pandas
 
 # Pandas 操作
 
@@ -2581,21 +2582,6 @@ c
 
 
 
-```python
-x, y=np.mgrid[-2:2:500j, -2:2:500j]
-
-z=(x**2 + y**2 -1 )**3 -x**2 * y**3
-
-plt.contourf(x,y,z, levels=[-1,0], colors=["red"])
-
-plt.gca().set_aspect("equal")
-
-plt.show()
-```
-
-![png](https://raw.githubusercontent.com/QQ764073652/SharePic/master/pandas/output_58_1.png)
-
-
 
 ```python
 # 透视表
@@ -2609,3 +2595,17 @@ from random import normalvariate
 ```
 
     100 loops, best of 3: 8.18 ms per loop
+
+```python
+x, y=np.mgrid[-2:2:500j, -2:2:500j]
+
+z=(x**2 + y**2 -1 )**3 -x**2 * y**3
+
+plt.contourf(x,y,z, levels=[-1,0], colors=["red"])
+
+plt.gca().set_aspect("equal")
+
+plt.show()
+```
+
+![png](https://raw.githubusercontent.com/QQ764073652/SharePic/master/pandas/output_58_1.png)

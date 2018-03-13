@@ -591,9 +591,12 @@ def start():
             data = json.loads(result)
             print(data)
 ```
-## RPC 远程代码调用 
-## p2p网络
-参考
+## RPC 远程代码调用
+参考：[Google-gRpc](https://grpc.io/docs/quickstart/python.html)\
+[Python RPC 之 gRPC](https://www.jianshu.com/p/14e6f5217f40)
+## P2P网络
+### Kademlia算法
+参考：
 [kademlia算法](https://www.jianshu.com/p/f2c31e632f1d?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation)
 [github-kademlia](https://github.com/bmuller/kademlia)
 ```
@@ -627,7 +630,7 @@ i	      [2^i, 2^(i+1))    /	        0.75i-3
 ![png](https://upload-images.jianshu.io/upload_images/947209-6bdd6e96a80d0780.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/430)
 ![png](https://upload-images.jianshu.io/upload_images/947209-1143169c8318a2ff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/666)
 
-## nat打洞
+### nat打洞
 ```
  # kademlia节点使用rpc通过udp进行通信，这意味着它能够在nat后面工作。
  # UDP打洞过程：
@@ -638,6 +641,41 @@ i	      [2^i, 2^(i+1))    /	        0.75i-3
 （5）ClientA利用信息给ClientB发消息。（A信任B）
 （6）ClinetB利用信息给ClientA发消息。（B信任A）
 （7）连接已经建立。两者可以直接通信了。
+```
+### Socket连接
+```python
+# server
+import socket
+
+address = ('127.0.0.1', 31500)
+# socket.SOCK_STREAM	基于TCP的流式socket通信
+# socket.SOCK_DGRAM	基于UDP的数据报式socket通信
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
+s.bind(address)
+s.listen(5)
+ss, addr = s.accept()
+print 'got connected from', addr
+
+ss.send('byebye')
+ra = ss.recv(512)
+print ra
+
+ss.close()
+s.close()
+
+# client
+import socket
+
+address = ('127.0.0.1', 31500)
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect(address)
+
+data = s.recv(512)
+print 'the data received is', data
+
+s.send('hihi')
+
+s.close()
 ```
 
 # 远程部署-Fabric
@@ -696,8 +734,8 @@ def deploy():
 [github-tensorflow-models](https://github.com/tensorflow/models)\
 [github-karas](https://github.com/keras-team/keras)\
 [document-karas](https://keras-cn.readthedocs.io/en/latest/)\
+[迁移学习](https://morvanzhou.github.io/tutorials/machine-learning/ML-intro/2-9-transfer-learning/)\
 todo 网络结构分析：CNN、RNN、LSTM、生成对抗网络、迁移学习……
-# 迁移学习(略)
 
 # 公有链平台
 ## 以太坊

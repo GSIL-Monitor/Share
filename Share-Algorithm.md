@@ -160,7 +160,7 @@ public class DynamicProgramming {
 
 # 遗传算法
 
-# N* 等寻到算法
+# N* 等寻道算法
 
 [各类算法](https://algorithm.yuanbin.me/zh-hans/dynamic_programming/distinct_subsequences.html)
 [各类算法](https://github.com/billryan/algorithm-exercise)
