@@ -91,11 +91,12 @@ BaaS 区块链即服务（Blockchain as a Service）
 ```
 ```
 表4-1 典型散列算法的特点
-加密算法 安全性 运算速度 输出大小（位）
-MD5 低 快 128
-SHA1 中 中 160
-SHA256 高 比SHA1略低 256
-SM3 高 比SHA1略低 256
+| 加密算法 | 安全性 | 运算速度 | 输出大小（位）|
+| --------   | -----:  | -----:  | :----:  |
+| MD5 | 低 | 快 | 128 |
+| SHA1 | 中 | 中 | 160 |
+|SHA256 |高 |比SHA1略低 |256|
+|SM3 |高 |比SHA1略低 |256|
 
 
 在近代公钥密码系统的研究中, 其安全性都是基于难解的可计算问题
@@ -125,10 +126,13 @@ SM2 高 高 中 中
 ![gif](http://img.blog.csdn.net/20161210180600786?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd281NDEwNzU3NTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)\
 [区块的存储结构-Merkle数](https://learnblockchain.cn/2017/11/09/merkle/)\
 ![png](https://diycode.b0.upaiyun.com/photo/2017/f59da4e17b1224d6a3fd46309ff6edd7.jpeg)
+[ECDSA数字签名算法](https://segmentfault.com/a/1190000012288285)\
 
+```
 以太坊 oracle 网络和加密
 数字货币、比特信（p2p加密通信https://github.com/Bitmessage/PyBitmessage）、征信
 超级账本、闪电网络
+```
 
 # 公有链平台
 ## 以太坊
