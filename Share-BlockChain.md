@@ -1,4 +1,19 @@
 # Share-区块链
+缩略术语：
+```
+缩略语 原始术语
+PoW 工作量证明（Proof of Work）
+PoS 权益证明（Proof of Stake）
+DPoS 股份授权证明（Delegate Proof of Stake）
+PBFT 实用拜占庭容错（Practical Byzantine Fault Tolerance）
+P2P 点对点（Peer to Peer）
+DAPP 分布式应用（Decentralized Application）
+KYC 客户识别（Know Your Customer）
+RSA RSA加密算法（RSA Algorithm）
+ECC 椭圆加密算法（Elliptic Curve Cryptography）
+BaaS 区块链即服务（Blockchain as a Service）
+```
+
 [MBA wiki - BlockChain](http://wiki.mbalib.com/wiki/%E5%8C%BA%E5%9D%97%E9%93%BE)
 ```
 从区块链的形成过程看，区块链技术具有以下特征。
@@ -17,49 +32,11 @@
 
 ## 共识算法
 参考：[区块链共识算法 PBFT（拜占庭容错）、PAXOS、RAFT简述](http://blog.csdn.net/jerry81333/article/details/74303194)
+![png](http://img.blog.csdn.net/20170704120008446?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvamVycnk4MTMzMw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
 ```
-比特币使用的是POS（Proof of Work，工作量证明），
+比特币使用的是POW（Proof of Work，工作量证明），
 以太币使用的是POS（Proof of Stake，股权证明）而今POS的变体DPOS（Delegated Proof of Stake，股份授权证明）进一步削减算力的浪费，同时也加强了区块链的安全性。
 传统的一致性算法成为首选，PBFT（拜占庭容错）、PAXOS、RAFT。
-```
-## P2P网络和Nat打洞
-
-## 密码学
-数字签名：
-	sha256
-对称加密：
-	AES
-非对称加密：
-	ECC椭圆曲线加密
-	RSA
-数字证书：
-	CA
-认证码：
-	HMAC（基于hash的消息认证码）
-	
-## 分布式文件系统 IPFS
-
-## 区块存储结构 Merkle和DAG图
-
-## 区块hash的计算
-
-## 分布式一致性 CAP理论
-
-[生成钱包地址](https://pic1.zhimg.com/80/v2-75d938393614bf24b2b0f55ed553d7ba_hd.jpg)
-
-缩略术语：
-```
-缩略语 原始术语
-PoW 工作量证明（Proof of Work）
-PoS 权益证明（Proof of Stake）
-DPoS 股份授权证明（Delegate Proof of Stake）
-PBFT 实用拜占庭容错（Practical Byzantine Fault Tolerance）
-P2P 点对点（Peer to Peer）
-DAPP 分布式应用（Decentralized Application）
-KYC 客户识别（Know Your Customer）
-RSA RSA加密算法（RSA Algorithm）
-ECC 椭圆加密算法（Elliptic Curve Cryptography）
-BaaS 区块链即服务（Blockchain as a Service）
 ```
 ```
 常用的共识机制主要有PoW、PoS、DPoS、Paxos、PBFT等。另
@@ -89,53 +66,62 @@ BaaS 区块链即服务（Blockchain as a Service）
 算法每轮记账都会由全网节点共同选举领导者，允许33%的节点作恶，容
 错性为33%.
 ```
-```
+
+## P2P网络和Nat打洞
+
+## 密码学
+[密码学]()
+[ECDSA数字签名算法](https://segmentfault.com/a/1190000012288285)
+
 表4-1 典型散列算法的特点
-| 加密算法 | 安全性 | 运算速度 | 输出大小（位）|
+|加密算法 |安全性 |运算速度 |输出大小（位）|
 | --------   | -----:  | -----:  | :----:  |
-| MD5 | 低 | 快 | 128 |
-| SHA1 | 中 | 中 | 160 |
+|MD5 |低 |快 |128 |
+|SHA1 |中 |中 |160 |
 |SHA256 |高 |比SHA1略低 |256|
 |SM3 |高 |比SHA1略低 |256|
 
-
-在近代公钥密码系统的研究中, 其安全性都是基于难解的可计算问题
-的，常用的非对称加密算法特点及其比较如表4-2和表4-3所示。
 表4-2 非对称加密算法的特点
-保密级别 RSA密钥长度 ECC/SM2密钥长度
-80 1024 160
-112 2048 224
+|保密级别 |RSA密钥长度 |ECC/SM2密钥长度|
+| --------   | -----:  | -----:  | :----:  |
+|80 |1024 |160|
+|112 |2048 |224|
+
 表4-3 RSA、ECC/SM2总体比较
-加密算法 成熟度 安全性 运算速度 资源消耗
-RSA 高 低 慢 高
-ECC 高 高 中 中
-SM2 高 高 中 中
+|加密算法 |成熟度 |安全性 |运算速度 |资源消耗|
+| --------   | -----:   | -----:  | -----:  | :----:  |
+|RSA |高 |低 |慢 |高|
+|ECC |高 |高 |中 |中|
+|SM2 |高 |高 |中 |中|
 
-4.3.5 隐私保护
-目前区块链上传输和存储的数据都是公开可见的，仅通过“伪匿名”
-的方式对交易双方进行一定的隐私保护。对于某些涉及大量的商业机密和
-利益的业务场景来说，数据的暴露不符合业务规则和监管要求。目前，业
-界普遍认为零知识证明、环签名和同态加密等技术比较有希望解决区块链
-的隐私问题。
+隐私保护
+  目前区块链上传输和存储的数据都是公开可见的，仅通过“伪匿名”的方式对交易双方进行一定的隐私保护。对于某些涉及大量的商业机密和利益的业务场景来说，数据的暴露不符合业务规则和监管要求。目前，业界普遍认为零知识证明、环签名和同态加密等技术比较有希望解决区块链的隐私问题。
 
-```
-参考：
+
+	
+## 分布式文件系统 IPFS
+
+## 区块存储结构 Merkle和DAG图
+[区块的存储结构-Merkle数](https://learnblockchain.cn/2017/11/09/merkle/)\
+![png](https://diycode.b0.upaiyun.com/photo/2017/f59da4e17b1224d6a3fd46309ff6edd7.jpeg)
+
+## 区块hash的计算
+
+## 分布式一致性 CAP理论
+
+## 比特币钱包
+[生成钱包地址](https://pic1.zhimg.com/80/v2-75d938393614bf24b2b0f55ed553d7ba_hd.jpg)
 [比特币钱包地址的生成](https://zhuanlan.zhihu.com/p/28036845)\
 [比特币找零地址](http://www.8btc.com/joybtc_5)\
 [浅析比特币的找零机制](http://www.8btc.com/bitcoin-change-addresses-explanation)\
 ![gif](http://img.blog.csdn.net/20161210180600786?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd281NDEwNzU3NTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)\
-[区块的存储结构-Merkle数](https://learnblockchain.cn/2017/11/09/merkle/)\
-![png](https://diycode.b0.upaiyun.com/photo/2017/f59da4e17b1224d6a3fd46309ff6edd7.jpeg)
-[ECDSA数字签名算法](https://segmentfault.com/a/1190000012288285)\
 
-```
-以太坊 oracle 网络和加密
-数字货币、比特信（p2p加密通信https://github.com/Bitmessage/PyBitmessage）、征信
-超级账本、闪电网络
-```
+## 比特信
+[github-比特信](https://github.com/Bitmessage/PyBitmessage)
+
 
 # 公有链平台
 ## 以太坊
-参考Solidity在线游戏CryptoZombies(https://cryptozombies.io/zh/)
+[Solidity在线游戏CryptoZombies](https://cryptozombies.io/zh/)
 ## steem
-[steem]https://smt.steem.io/
+[steem](https://smt.steem.io/)
