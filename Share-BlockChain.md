@@ -16,6 +16,7 @@
 
 
 ## 共识算法
+参考：[区块链共识算法 PBFT（拜占庭容错）、PAXOS、RAFT简述](http://blog.csdn.net/jerry81333/article/details/74303194)
 ```
 比特币使用的是POS（Proof of Work，工作量证明），
 以太币使用的是POS（Proof of Stake，股权证明）而今POS的变体DPOS（Delegated Proof of Stake，股份授权证明）进一步削减算力的浪费，同时也加强了区块链的安全性。
@@ -117,7 +118,13 @@ SM2 高 高 中 中
 的隐私问题。
 
 ```
-
+参考：
+[比特币钱包地址的生成](https://zhuanlan.zhihu.com/p/28036845)\
+[比特币找零地址](http://www.8btc.com/joybtc_5)\
+[浅析比特币的找零机制](http://www.8btc.com/bitcoin-change-addresses-explanation)\
+![gif](http://img.blog.csdn.net/20161210180600786?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd281NDEwNzU3NTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)\
+[区块的存储结构-Merkle数](https://learnblockchain.cn/2017/11/09/merkle/)\
+![png](https://diycode.b0.upaiyun.com/photo/2017/f59da4e17b1224d6a3fd46309ff6edd7.jpeg)
 
 以太坊 oracle 网络和加密
 数字货币、比特信（p2p加密通信https://github.com/Bitmessage/PyBitmessage）、征信

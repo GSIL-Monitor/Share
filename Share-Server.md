@@ -317,7 +317,13 @@ gg=G                        格式化，自动对齐
 > telnet 114.215.222.138 9999 #测试远程端口是否连通
 > lsof -i tcp:80  #查看80端口占用情况
 ```
-
+## 获取公网IP
+```cmd
+# ipip.net提供（推荐）
+> curl myip.ipip.net
+# ifconfig.me提供
+> curl ifconfig.me  
+```
 ## 压缩/解压
 ### tar
 ```cmd
