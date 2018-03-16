@@ -438,6 +438,8 @@ echo 'success!'
 > git branch -D hotfix                              # 强制删除分支hotfix
 > git branch XXX				                    # 创建分支
 > git merge [branch]                                # 将[branch]分支内容合并到当前分支
+> git branch -r                                     # 列出远程所有分支
+
 # remote conf
 > git remote rename origin old-origin               # 重命名原配置的origin地址，防冲突
 > git remote add origin [url]                       # 添加远程服务器地址
