@@ -162,7 +162,7 @@ upstream
 ```yaml
 # api
 upstream upstream_api {
-	server 10.18.0.14:8080;
+       server 10.18.0.14:8080;
 }
 # management
 upstream mgmt_api{
@@ -531,6 +531,17 @@ trust_host_root_certs: false
 > docker run -v $OVPN_DATA:/etc/openvpn --rm kylemanna/openvpn ovpn_genconfig -u udp://VPN.SERVERNAME.COM
 > docker run -v $OVPN_DATA:/etc/openvpn --rm -it kylemanna/openvpn ovpn_initpki
 ```
+```cmd
+# 客户端配置
+1、在config目录下添加pass.txt
+userName
+password
+2、在config目录下修改.opvn文件添加
+auth-user-pass pass.txt
+3、快捷方式"目标"后添加
+--connect client.ovpn
+```
+
 ## 代理-Socket5
 具体参考 [自建SS服务器教程](https://app.yinxiang.com/shard/s48/nl/13169588/64ea6fe0-bc46-40da-9392-be395eea44c6)
 ```bash

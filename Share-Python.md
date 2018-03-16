@@ -1,4 +1,20 @@
 # Share - Python篇
+
+# Juptyer Notebook
+```bash
+# help
+> ipython notebook -h
+# 外网访问
+> ipython notebook --ip [ip] --port [port]
+```
+```python
+# 图嵌入和全输出和忽略警告
+from IPython.core.interactiveshell import InteractiveShell
+import warnings
+
+warnings.filterwarnings("ignore")
+InteractiveShell.ast_node_interactivity = "all"
+```
 # Wind
 ## WSD数据获取
 ```python
