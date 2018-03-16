@@ -74,6 +74,7 @@ BaaS 区块链即服务（Blockchain as a Service）
 [ECDSA数字签名算法](https://segmentfault.com/a/1190000012288285)
 
 表4-1 典型散列算法的特点
+
 |加密算法 |安全性 |运算速度 |输出大小（位）|
 | --------   | -----:  | -----:  | :----:  |
 |MD5 |低 |快 |128 |
@@ -82,12 +83,14 @@ BaaS 区块链即服务（Blockchain as a Service）
 |SM3 |高 |比SHA1略低 |256|
 
 表4-2 非对称加密算法的特点
-|保密级别 |RSA密钥长度 |ECC/SM2密钥长度|
+
+||保密级别 |RSA密钥长度 |ECC/SM2密钥长度|
 | --------   | -----:  | -----:  | :----:  |
 |80 |1024 |160|
 |112 |2048 |224|
 
 表4-3 RSA、ECC/SM2总体比较
+
 |加密算法 |成熟度 |安全性 |运算速度 |资源消耗|
 | --------   | -----:   | -----:  | -----:  | :----:  |
 |RSA |高 |低 |慢 |高|
@@ -114,7 +117,7 @@ BaaS 区块链即服务（Blockchain as a Service）
 [比特币钱包地址的生成](https://zhuanlan.zhihu.com/p/28036845)\
 [比特币找零地址](http://www.8btc.com/joybtc_5)\
 [浅析比特币的找零机制](http://www.8btc.com/bitcoin-change-addresses-explanation)\
-![gif](http://img.blog.csdn.net/20161210180600786?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd281NDEwNzU3NTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)\
+![gif](http://img.blog.csdn.net/20161210180600786?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd281NDEwNzU3NTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 
 ## 比特信
 [github-比特信](https://github.com/Bitmessage/PyBitmessage)

@@ -30,6 +30,10 @@
 # docker清理占用卷
 # 如果你的docker目录仍然占据着大量空间，那可能是因为多余的卷占用了你的磁盘。RM命令的-v命令通常会处理这个问题。但有时，如果你关闭容器不会自动删除容器，VFS目录将增长很快。我们可以通过删除不需要的卷来恢复这个空间。要做到这一点，有一个Docker镜像，你可以使用如下命令来运行它：
 > docker run -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker:/var/lib/docker --rm martin/docker-cleanup-volumes
+# 删除所有已经停止的容器
+> sudo docker rm $(sudo docker ps -a -q)
+# 杀死所有正在运行的容器
+> sudo docker kill $(sudo docker ps -a -q)
 
 # 备份镜像
 > Usage
@@ -472,6 +476,53 @@ echo 'success!'
     HTTP_X_FORWARDED_FOR = not determined
     可以看出来，高匿代理让别人根本无法发现你是在用代理，所以是最好的选择。
 ```
+# 内网穿透 - Ngrok
+参考[使用Docker搭建Ngrok服务器](https://hteen.cn/docker/docker-ngrok.html)
+> 由于网站停止服务，使用docker搭建ngrok暂无法使用
+```bash
+# 服务端：
+# 启动一个容器生成ngrok客户端,服务器端和CA证书
+> docker run --rm -it -e DOMAIN="tunnel.hteen.cn" -v /data1/ngrok:/myfiles hteen/ngrok /bin/bash /build.sh
+# 启动Ngrok server
+> docker run -idt --name ngrok-server \
+-v /data1/ngrok:/myfiles \
+-p 80:80 \
+-p 443:443 \
+-p 4443:4443 \
+-e DOMAIN='tunnel.hteen.cn' hteen/ngrok /bin/bash /server.sh
+# 如果端口被占用，使用nginx代理
+server {
+     listen       80;
+     server_name  tunnel.hteen.cn *.tunnel.hteen.cn;
+     location / {
+             proxy_redirect off;
+             proxy_set_header Host $host;
+             proxy_set_header X-Real-IP $remote_addr;
+             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+             proxy_pass http://10.24.198.241:8082;
+     }
+}
+server {
+     listen       443;
+     server_name  tunnel.hteen.cn *.tunnel.hteen.cn;
+     location / {
+             proxy_redirect off;
+             proxy_set_header Host $host;
+             proxy_set_header X-Real-IP $remote_addr;
+             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+             proxy_pass http://10.24.198.241:4432;
+     }
+}
+
+# 客户端：
+# 创建配置文件ngrok.cfg
+server_addr: "tunnel.hteen.cn:4443"
+trust_host_root_certs: false
+# 启动ngrok
+./ngrok -config ./ngrok.cfg -subdomain wechat 80
+
+```
+
 ## OpenVPN
 具体参考[DockerHub-kylemanna/openvpn](https://hub.docker.com/r/kylemanna/openvpn/)
 ```bash
