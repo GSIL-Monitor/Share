@@ -18,8 +18,8 @@
 ## [TensorFlow篇](Share-TensorFlow.md)
 ## [区块链](Share-BlockChain.md)
 > 包含：
-    >* 共识算法
-    >* 密码学
-    >* P2P网络
-    >* 比特币
-    >* 以太坊
+   >* 共识算法
+   >* 密码学
+   >* P2P网络
+   >* 比特币
+   >* 以太坊
