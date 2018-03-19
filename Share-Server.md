@@ -34,6 +34,8 @@
 > sudo docker rm $(sudo docker ps -a -q)
 # 杀死所有正在运行的容器
 > sudo docker kill $(sudo docker ps -a -q)
+# 查看docker log和使用tail
+>  sudo docker logs beta_api_qa | tail -100f 
 
 # 备份镜像
 > Usage
