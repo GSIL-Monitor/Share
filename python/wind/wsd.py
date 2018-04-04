@@ -10,8 +10,8 @@ from sqlalchemy import create_engine
 db_connect_string = 'mysql://betaWR:betaWR123@10.18.0.2:3306/beta_psbc?charset=utf8'
 engine = create_engine(db_connect_string)
 
-raw_data = w.wsd('000001.OF', "nav,NAV_adj", '2017-01-01', '2018-01-01', "")
 w.start()
+raw_data = w.wsd('000001.OF', "nav,NAV_adj", '2017-01-01', '2018-01-01', "")
 with engine.connect() as conn:
     if not raw_data.ErrorCode:
         df = pd.DataFrame(index=raw_data.Times, columns=raw_data.Fields,

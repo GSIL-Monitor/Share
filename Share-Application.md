@@ -68,6 +68,7 @@
 
 
 # Chrome插件
+ruanxingbaozi@gmail.com
 ## XPath Helper
 [下载](https://chrome.google.com/webstore/detail/charset/hgimnogjllphhhkhlmebbmlgjoejdpjl)
 ## Chrono下载管理器 / 添加到aria2

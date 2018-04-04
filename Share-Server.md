@@ -35,7 +35,12 @@
 # 杀死所有正在运行的容器
 > sudo docker kill $(sudo docker ps -a -q)
 # 查看docker log和使用tail
->  sudo docker logs beta_api_qa | tail -100f 
+>  sudo docker logs beta_api_qa | tail -100f
+# 登陆到docker容器
+> sudo docker attach [contain id]  
+# 使用exec登陆容器
+> sudo docker exec -it [contain name/id] /bin/bash 
+ 
 
 # 备份镜像
 > Usage
@@ -300,7 +305,7 @@ gg=G                        格式化，自动对齐
 # 打印第9-11行
 > sed -n '9,11p' test.txt | cat -n
 # 将行首的#号去掉
-> sed 's/^#//g' test.txt | cat -n
+> sed 's/^#//g' test.txt | cat -n 
 ```
 ## 资源查看
 ```cmd

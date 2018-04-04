@@ -12,18 +12,18 @@ services:
     command:
     - --loglevel warning
     volumes:
-    - /data1/Docker/gitlab/redis:/var/lib/redis:Z
+    - /data1/docker/gitlab/redis:/var/lib/redis:Z
 
   gitlab_postgresql:
     restart: always
-    image: sameersbn/postgresql:9.5-3
+    image: sameersbn/postgresql:latest
     container_name : gitlab_postgresql
     hostname: gitlab_postgresql
     mem_limit: 2000m
     stdin_open: true
     tty: true
     volumes:
-    - /data1/Docker/gitlab/postgresql:/var/lib/postgresql:Z
+    - /data1/docker/gitlab/postgresql:/var/lib/postgresql:Z
     environment:
     - DB_USER=gitlab
     - DB_PASS=betapassword
@@ -32,7 +32,7 @@ services:
 
   gitlab:
     restart: always
-    image: sameersbn/gitlab:8.13.3
+    image: sameersbn/gitlab:latest
     container_name : gitlab
     hostname: gitlab
     mem_limit: 2000m
@@ -45,7 +45,7 @@ services:
     - "10080:80"
     - "10022:22"
     volumes:
-    - /data1/Docker/gitlab/gitlab:/home/git/data:Z
+    - /data1/docker/gitlab/gitlab:/home/git/data:Z
     environment:
     - DEBUG=false
 

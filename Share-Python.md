@@ -752,3 +752,23 @@ def deploy():
 [document-karas](https://keras-cn.readthedocs.io/en/latest/)\
 [迁移学习](https://morvanzhou.github.io/tutorials/machine-learning/ML-intro/2-9-transfer-learning/)\
 todo 网络结构分析：CNN、RNN、LSTM、生成对抗网络、迁移学习……
+
+
+# sphinx生成文档
+```bash
+# 安装sphinx
+> pip install Sphinx
+# 快速配置：
+# 1、进入到项目根目录
+# 2、指定项目路径、名称、版本等、其他选项默认、语言-中文：zh_CN、生成makefile
+> sphinx-quickstart
+# 修改conf.py文件第20行附近(路径是相对source/目录，所以切换到上一目录)
+import os
+import sys
+# sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../..'))
+# 生成.rst文档,source目录为生成的目录 .目录为项目目录
+> sphinx-apidoc -o ./source .
+# 生成html文件
+> make html
+```
